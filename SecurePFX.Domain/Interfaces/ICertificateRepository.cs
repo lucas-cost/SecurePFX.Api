@@ -1,10 +1,9 @@
 ﻿using SecurePFX.Domain.Entities;
-using SecurePFX.Domain.Enums;
 
 namespace SecurePFX.Domain.Interfaces
 {
-    public interface ICertificateRepository : IRepository<Certificate>
+    public interface ICertificateRepository
     {
-        Task<Certificate?> GetActiveAsync(CertificateContext context, CertificateCategory category, CancellationToken cancellationToken = default);
+        Task<string> AddAsync(Certificate certificate, CancellationToken cancellationToken = default);
     }
 }
