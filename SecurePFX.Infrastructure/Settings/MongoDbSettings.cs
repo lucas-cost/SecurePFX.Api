@@ -1,4 +1,4 @@
-﻿namespace SecurePFX.Infrastructure.Configurations
+﻿namespace SecurePFX.Infrastructure.Settings
 {
     public class MongoDbSettings
     {

@@ -1,15 +1,52 @@
+using Microsoft.Extensions.Options;
+using SecurePFX.Application.Interfaces;
+using SecurePFX.Application.Mapping;
+using SecurePFX.Application.Services;
+using SecurePFX.Application.Settings;
+using SecurePFX.Domain.Interfaces;
+using SecurePFX.Infrastructure.Data.Contexts;
+using SecurePFX.Infrastructure.Data.Repositories;
+using SecurePFX.Infrastructure.Settings;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Configuração básica da API
+builder.Services.AddControllers()
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        options.SuppressModelStateInvalidFilter = true;
+    });
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// Configurações
+builder.Services.Configure<CertificateSettings>(builder.Configuration.GetSection("CertificateSettings"));
+builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDbSettings"));
+
+// AutoMapper
+builder.Services.AddAutoMapper(typeof(CertificateProfile));
+
+// MongoDB
+builder.Services.AddSingleton<MongoDbContext>(provider =>
+{
+    var settings = provider.GetRequiredService<IOptions<MongoDbSettings>>().Value;
+    return new MongoDbContext(Options.Create(settings));
+});
+
+// Repositórios
+builder.Services.AddScoped<ICertificateRepository, CertificateRepository>();
+
+// Serviços de Aplicação
+builder.Services.AddScoped<ICertificateService, CertificateService>();
+
+// Swagger (apenas para desenvolvimento)
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+}
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Pipeline de requisições HTTP
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -17,9 +54,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
