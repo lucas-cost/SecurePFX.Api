@@ -1,4 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using SecurePFX.Application.DTOs.Requests;
+using SecurePFX.Application.Interfaces;
+using SecurePFX.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace SecurePFX.Api.Controllers
 {
@@ -7,16 +11,37 @@ namespace SecurePFX.Api.Controllers
     public class SecurePFXController : ControllerBase
     {
         private readonly ILogger<SecurePFXController> _logger;
+        private readonly ICertificateService _certificateService;
 
-        public SecurePFXController(ILogger<SecurePFXController> logger)
+        public SecurePFXController(ILogger<SecurePFXController> logger, ICertificateService certificateService)
         {
             _logger = logger;
+            _certificateService = certificateService;
         }
 
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadCertificate([FromRoute] IFormFile file, CancellationToken cancellationToken)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> UploadCertificate([FromForm] CertificateUploadDTO uploadCertificateDTO, CancellationToken cancellationToken)
         {
-            return Ok("Certificado enviado com sucesso.");
+            try
+            {
+                var response = await _certificateService.ProcessAndStoreCertificateAsync(uploadCertificateDTO, cancellationToken);
+                return Ok(new
+                {
+                    Success = true,
+                    Data = response,
+                    Message = "Certificado processado e armazenado com sucesso.",
+                });
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao processar certificado");
+                return StatusCode(500, "Ocorreu um erro interno.");
+            }
         }
     }
 }
