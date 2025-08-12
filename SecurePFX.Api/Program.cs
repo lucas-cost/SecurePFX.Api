@@ -33,6 +33,7 @@ builder.Services.AddSingleton<MongoDbContext>(provider =>
 
 // Repositórios
 builder.Services.AddScoped<ICertificateRepository, CertificateRepository>();
+builder.Services.AddScoped<IEncryptionService, EncryptionService>();
 
 // Serviços de Aplicação
 builder.Services.AddScoped<ICertificateService, CertificateService>();
