@@ -13,17 +13,22 @@ namespace SecurePFX.Domain.Entities
         [BsonElement("file_data")]
         public byte[] RawData { get; set; } = default!;
 
+        public string Thumbprint { get; set; }
+
+        public string Subject { get; set; }
+
+        public string Issuer { get; set; }
+
+        public DateTime NotBefore { get; set; }
+
+        public DateTime NotAfter { get; set; }
+
         public CertificateContext Context { get; set; }
 
         public CertificateCategory Category { get; set; }
 
         public bool IsActive { get; set; }
 
-        [BsonIgnoreIfNull]
-        public string? Password { get; set; } // Opcional: criptografar com AES
-
         public DateTime StorageDate { get; set; }
-
-        public DateTime? ExpirationDate { get; set; }
     }
 }
