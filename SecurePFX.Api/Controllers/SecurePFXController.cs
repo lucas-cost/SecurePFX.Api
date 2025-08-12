@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SecurePFX.Application.DTOs.Requests;
+using SecurePFX.Application.DTOs.Responses;
 using SecurePFX.Application.Interfaces;
-using SecurePFX.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace SecurePFX.Api.Controllers
@@ -25,7 +25,8 @@ namespace SecurePFX.Api.Controllers
         {
             try
             {
-                var response = await _certificateService.ProcessAndStoreCertificateAsync(uploadCertificateDTO, cancellationToken);
+                CertificateResponseDTO response = await _certificateService.ProcessAndStoreCertificateAsync(uploadCertificateDTO, cancellationToken);
+
                 return Ok(new
                 {
                     Success = true,
