@@ -8,6 +8,8 @@ using SecurePFX.Application.Settings;
 using SecurePFX.Domain.Entities;
 using SecurePFX.Domain.Interfaces;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 
 namespace SecurePFX.Application.Services
 {
@@ -15,29 +17,31 @@ namespace SecurePFX.Application.Services
     {
         private readonly CertificateSettings _settings;
         private readonly ICertificateRepository _certificateRepository;
+        private readonly IEncryptionService _encryptionService;
         private readonly IMapper _mapper;
 
-        public CertificateService(ICertificateRepository certificateRepository, IMapper mapper, IOptions<CertificateSettings> settings)
+        public CertificateService(ICertificateRepository certificateRepository, IEncryptionService encryptionService, IMapper mapper, IOptions<CertificateSettings> settings)
         {
             _certificateRepository = certificateRepository;
+            _encryptionService = encryptionService;
             _mapper = mapper;
             _settings = settings.Value;
         }
 
-        public async Task<CertificateResponseDTO> ProcessAndStoreCertificateAsync(CertificateUploadDTO uploadCertificateDTO, CancellationToken cancellationToken)
+        public async Task<CertificateResponseDTO> ProcessAndStoreCertificateAsync(CertificateUploadDTO certificateUploadDTO, CancellationToken cancellationToken)
         {
-            // Validações
-            ValidateFile(uploadCertificateDTO.File);
+            ValidateFile(certificateUploadDTO.File);
 
-            // Processamento
-            Certificate certificate = _mapper.Map<Certificate>(uploadCertificateDTO);
-            certificate.RawData = await ReadFileDataAsync(uploadCertificateDTO.File);
-            certificate.StorageDate = DateTime.UtcNow;
+            byte[] rawData = await ReadFileDataAsync(certificateUploadDTO.File);
 
-            // Persistência
-            var certificateId = await _certificateRepository.AddAsync(certificate, cancellationToken);
+            string password = GetCertificatePassword(certificateUploadDTO.Password!);
+            X509Certificate2 cert = LoadCertificate(rawData, password);
 
-            var response = _mapper.Map<CertificateResponseDTO>(certificate);
+            Certificate certificate = CreateCertificateEntity(certificateUploadDTO, cert, rawData);
+
+            certificate.Id = await _certificateRepository.AddAsync(certificate, cancellationToken);
+
+            CertificateResponseDTO response = _mapper.Map<CertificateResponseDTO>(certificate);
 
             return response;
         }
@@ -59,6 +63,36 @@ namespace SecurePFX.Application.Services
 
             if (file.Length > _settings.MaxFileSizeInBytes)
                 throw new ValidationException("Tamanho máximo do arquivo: 5MB.");
+        }
+
+        private Certificate CreateCertificateEntity(CertificateUploadDTO dto, X509Certificate2 cert, byte[] rawData)
+        {
+            Certificate certificate = _mapper.Map<Certificate>(dto);
+            _mapper.Map(cert, certificate);
+            certificate.RawData = _encryptionService.Encrypt(rawData);
+
+            return certificate;
+        }
+
+        private string GetCertificatePassword(string providedPassword)
+        {
+            return string.IsNullOrWhiteSpace(providedPassword) ? _settings.DefaultPassword : providedPassword;
+        }
+
+        private X509Certificate2 LoadCertificate(byte[] rawData, string password)
+        {
+            try
+            {
+                return new X509Certificate2(
+                    rawData,
+                    password,
+                    X509KeyStorageFlags.EphemeralKeySet
+                );
+            }
+            catch (CryptographicException ex)
+            {
+                throw new ValidationException("Certificado inválido ou senha incorreta.", ex);
+            }
         }
     }
 }

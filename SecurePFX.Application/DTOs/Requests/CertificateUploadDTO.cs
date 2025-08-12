@@ -17,5 +17,7 @@ namespace SecurePFX.Application.DTOs.Requests
 
         [Required(ErrorMessage = "O nome do certificado é obrigatório.")]
         public bool? IsActive { get; set; }
+
+        public string? Password { get; set; }
     }
 }
