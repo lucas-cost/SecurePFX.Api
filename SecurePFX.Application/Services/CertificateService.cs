@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using SecurePFX.Application.DTOs.Requests;
 using SecurePFX.Application.DTOs.Responses;
+using SecurePFX.Application.Exceptions.Resource;
 using SecurePFX.Application.Interfaces;
 using SecurePFX.Application.Settings;
 using SecurePFX.Domain.Entities;
@@ -56,13 +57,13 @@ namespace SecurePFX.Application.Services
         private void ValidateFile(IFormFile file)
         {
             if (file == null || file.Length == 0)
-                throw new ValidationException("O arquivo do certificado é obrigatório.");
+                throw new ValidationException(SrcMsg.SRC001);
 
             if (!Path.GetExtension(file.FileName).Equals(".pfx", StringComparison.OrdinalIgnoreCase))
-                throw new ValidationException("Apenas arquivos .pfx são aceitos.");
+                throw new ValidationException(SrcMsg.SRC005);
 
             if (file.Length > _settings.MaxFileSizeInBytes)
-                throw new ValidationException("Tamanho máximo do arquivo: 5MB.");
+                throw new ValidationException(SrcMsg.SRC006);
         }
 
         private Certificate CreateCertificateEntity(CertificateUploadDTO dto, X509Certificate2 cert, byte[] rawData)
@@ -91,7 +92,7 @@ namespace SecurePFX.Application.Services
             }
             catch (CryptographicException ex)
             {
-                throw new ValidationException("Certificado inválido ou senha incorreta.", ex);
+                throw new ValidationException(SrcMsg.SRC007, ex);
             }
         }
     }

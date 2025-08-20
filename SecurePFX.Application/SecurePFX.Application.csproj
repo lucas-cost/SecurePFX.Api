@@ -17,4 +17,20 @@
     <ProjectReference Include="..\SecurePFX.Domain\SecurePFX.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Exceptions\Resource\SrcMsg.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SrcMsg.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Exceptions\Resource\SrcMsg.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SrcMsg.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>SecurePFX.Application.Exceptions.Resource</CustomToolNamespace>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>
