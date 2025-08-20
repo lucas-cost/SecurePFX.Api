@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using SecurePFX.Api.Resources;
 using SecurePFX.Application.DTOs.Requests;
 using SecurePFX.Application.DTOs.Responses;
 using SecurePFX.Application.Interfaces;
@@ -26,12 +27,12 @@ namespace SecurePFX.Api.Controllers
             try
             {
                 CertificateResponseDTO response = await _certificateService.ProcessAndStoreCertificateAsync(uploadCertificateDTO, cancellationToken);
-
+                
                 return Ok(new
                 {
                     Success = true,
                     Data = response,
-                    Message = "Certificado processado e armazenado com sucesso.",
+                    Message = ApiMsg.API001,
                 });
             }
             catch (ValidationException ex)
@@ -40,8 +41,8 @@ namespace SecurePFX.Api.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao processar certificado");
-                return StatusCode(500, "Ocorreu um erro interno.");
+                _logger.LogError(ex, ApiMsg.APILOG001);
+                return StatusCode(500, ApiMsg.API002);
             }
         }
     }
