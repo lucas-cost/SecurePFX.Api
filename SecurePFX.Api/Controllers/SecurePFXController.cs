@@ -1,8 +1,11 @@
+using AutoMapper;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using SecurePFX.Api.Resources;
 using SecurePFX.Application.DTOs.Requests;
 using SecurePFX.Application.DTOs.Responses;
 using SecurePFX.Application.Interfaces;
+using SecurePFX.Application.Messages;
 using System.ComponentModel.DataAnnotations;
 
 namespace SecurePFX.Api.Controllers
@@ -13,21 +16,29 @@ namespace SecurePFX.Api.Controllers
     {
         private readonly ILogger<SecurePFXController> _logger;
         private readonly ICertificateService _certificateService;
+        private readonly IMapper _mapper;
 
-        public SecurePFXController(ILogger<SecurePFXController> logger, ICertificateService certificateService)
+        public SecurePFXController(ILogger<SecurePFXController> logger, ICertificateService certificateService, IMapper mapper)
         {
             _logger = logger;
             _certificateService = certificateService;
+            _mapper = mapper;
         }
 
         [HttpPost("upload")]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> UploadCertificate([FromForm] CertificateUploadDTO uploadCertificateDTO, CancellationToken cancellationToken)
+        public async Task<IActionResult> UploadCertificate([FromForm] CertificateUploadDTO uploadCertificateDTO, CancellationToken cancellationToken, [FromServices] IBus bus)
         {
             try
             {
                 CertificateResponseDTO response = await _certificateService.ProcessAndStoreCertificateAsync(uploadCertificateDTO, cancellationToken);
-                
+
+                CertificateUploadedMessageEvent certificateUploadedMessageEvent = _mapper.Map<CertificateUploadedMessageEvent>(response);
+
+                await bus.Publish(certificateUploadedMessageEvent, cancellationToken);
+
+                _logger.LogInformation("Message published to RabbitMQ: CertificateId={CertificateId}", response.Id);
+
                 return Ok(new
                 {
                     Success = true,

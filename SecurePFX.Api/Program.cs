@@ -1,4 +1,6 @@
 using Microsoft.Extensions.Options;
+using SecurePFX.Api.Extensions;
+using SecurePFX.Api.Mapping;
 using SecurePFX.Application.Interfaces;
 using SecurePFX.Application.Mapping;
 using SecurePFX.Application.Services;
@@ -23,6 +25,7 @@ builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("Mo
 
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(CertificateProfile));
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 // MongoDB
 builder.Services.AddSingleton<MongoDbContext>(provider =>
@@ -44,6 +47,8 @@ if (builder.Environment.IsDevelopment())
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 }
+
+builder.Services.AddRabbitMqServices(builder.Configuration);
 
 var app = builder.Build();
 
