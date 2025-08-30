@@ -6,6 +6,7 @@ using SecurePFX.Application.Mapping;
 using SecurePFX.Application.Services;
 using SecurePFX.Application.Settings;
 using SecurePFX.Domain.Interfaces;
+using SecurePFX.Infrastructure.Authentication;
 using SecurePFX.Infrastructure.Data.Contexts;
 using SecurePFX.Infrastructure.Data.Repositories;
 using SecurePFX.Infrastructure.Settings;
@@ -22,6 +23,9 @@ builder.Services.AddControllers()
 // Configurações
 builder.Services.Configure<CertificateSettings>(builder.Configuration.GetSection("CertificateSettings"));
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDbSettings"));
+
+// Autenticação JWT
+builder.Services.AddJwtAuthentication(builder.Configuration);
 
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(CertificateProfile));
@@ -60,6 +64,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

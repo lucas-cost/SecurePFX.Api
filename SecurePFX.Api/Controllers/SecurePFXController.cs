@@ -1,5 +1,6 @@
 using AutoMapper;
 using MassTransit;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SecurePFX.Api.Resources;
 using SecurePFX.Application.DTOs.Requests;
@@ -27,6 +28,7 @@ namespace SecurePFX.Api.Controllers
 
         [HttpPost("upload")]
         [Consumes("multipart/form-data")]
+        [Authorize]
         public async Task<IActionResult> UploadCertificate([FromForm] CertificateUploadDTO uploadCertificateDTO, CancellationToken cancellationToken, [FromServices] IBus bus)
         {
             try
@@ -55,6 +57,12 @@ namespace SecurePFX.Api.Controllers
                 _logger.LogError(ex, ApiMsg.APILOG001);
                 return StatusCode(500, ApiMsg.API002);
             }
+        }
+
+        [HttpGet("get")]
+        public async Task<IActionResult> GetCertificateAsync()
+        {
+            return Ok("SecurePFX Api is running...");   
         }
     }
 }
