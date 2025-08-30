@@ -1,6 +1,6 @@
 ﻿using MongoDB.Driver;
 using SecurePFX.Domain.Entities;
-using SecurePFX.Domain.Interfaces;
+using SecurePFX.Domain.Interfaces.Repositories;
 using SecurePFX.Infrastructure.Data.Contexts;
 
 namespace SecurePFX.Infrastructure.Data.Repositories

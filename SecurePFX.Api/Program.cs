@@ -5,7 +5,7 @@ using SecurePFX.Application.Interfaces;
 using SecurePFX.Application.Mapping;
 using SecurePFX.Application.Services;
 using SecurePFX.Application.Settings;
-using SecurePFX.Domain.Interfaces;
+using SecurePFX.Domain.Interfaces.Repositories;
 using SecurePFX.Infrastructure.Authentication;
 using SecurePFX.Infrastructure.Data.Contexts;
 using SecurePFX.Infrastructure.Data.Repositories;

@@ -7,7 +7,7 @@ using SecurePFX.Application.Exceptions.Resource;
 using SecurePFX.Application.Interfaces;
 using SecurePFX.Application.Settings;
 using SecurePFX.Domain.Entities;
-using SecurePFX.Domain.Interfaces;
+using SecurePFX.Domain.Interfaces.Repositories;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;

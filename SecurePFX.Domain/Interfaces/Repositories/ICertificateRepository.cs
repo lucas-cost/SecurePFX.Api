@@ -1,6 +1,6 @@
 ﻿using SecurePFX.Domain.Entities;
 
-namespace SecurePFX.Domain.Interfaces
+namespace SecurePFX.Domain.Interfaces.Repositories
 {
     public interface ICertificateRepository
     {
