@@ -13,13 +13,13 @@ namespace SecurePFX.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class SecurePFXController : ControllerBase
+    public class CertificateController : ControllerBase
     {
-        private readonly ILogger<SecurePFXController> _logger;
+        private readonly ILogger<CertificateController> _logger;
         private readonly ICertificateService _certificateService;
         private readonly IMapper _mapper;
 
-        public SecurePFXController(ILogger<SecurePFXController> logger, ICertificateService certificateService, IMapper mapper)
+        public CertificateController(ILogger<CertificateController> logger, ICertificateService certificateService, IMapper mapper)
         {
             _logger = logger;
             _certificateService = certificateService;
