@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SecurePFX.Api.Resources;
 using SecurePFX.Application.DTOs.Requests;
@@ -9,13 +10,13 @@ namespace SecurePFX.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class CompaniesController : ControllerBase
+    public class CompanyController : ControllerBase
     {
         private readonly ICompanyService _companyService;
-        private readonly ILogger<CompaniesController> _logger;
+        private readonly ILogger<CompanyController> _logger;
         private readonly IMapper _mapper;
 
-        public CompaniesController(ICompanyService companyService, ILogger<CompaniesController> logger, IMapper mapper)
+        public CompanyController(ICompanyService companyService, ILogger<CompanyController> logger, IMapper mapper)
         {
             _companyService = companyService;
             _logger = logger;
@@ -23,7 +24,7 @@ namespace SecurePFX.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCompany([FromBody] CreateCompanyRequestDTO request)
+        public async Task<IActionResult> RegisterCompany([FromBody] CreateCompanyRequestDTO request)
         {
             try
             {
