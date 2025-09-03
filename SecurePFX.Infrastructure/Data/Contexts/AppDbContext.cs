@@ -10,5 +10,7 @@ namespace SecurePFX.Infrastructure.Data.Contexts
         }
 
         public DbSet<Company> Companies { get; set; }
+
+        public DbSet<AuthorizeCompany> AuthorizedCompanies { get; set; }
     }
 }

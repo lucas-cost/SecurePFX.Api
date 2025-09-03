@@ -7,6 +7,7 @@ namespace SecurePFX.Infrastructure.Data.Repositories
     public class UnitOfWork : IUnitOfWork
     {
         private ICompanyRepository _companyRepository;
+        private IAuthorizeCompanyRepository _authorizeRepository;
         private readonly AppDbContext _context;
 
         public UnitOfWork(AppDbContext context)
@@ -16,6 +17,9 @@ namespace SecurePFX.Infrastructure.Data.Repositories
 
         public ICompanyRepository Companies
             => _companyRepository ??= new CompanyRepository(_context);
+
+        public IAuthorizeCompanyRepository AuthorizedCompanies
+            => _authorizeRepository ??= new AuthorizeCompanyRepository(_context);
 
         public async Task<int> CommitAsync()
         {
