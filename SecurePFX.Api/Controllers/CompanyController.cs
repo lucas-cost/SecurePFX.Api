@@ -9,7 +9,7 @@ using SecurePFX.Application.Interfaces;
 namespace SecurePFX.Api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class CompanyController : ControllerBase
     {
         private readonly ICompanyService _companyService;

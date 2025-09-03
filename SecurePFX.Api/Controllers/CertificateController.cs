@@ -12,7 +12,7 @@ using System.ComponentModel.DataAnnotations;
 namespace SecurePFX.Api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class CertificateController : ControllerBase
     {
         private readonly ILogger<CertificateController> _logger;
