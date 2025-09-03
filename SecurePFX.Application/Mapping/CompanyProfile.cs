@@ -7,7 +7,7 @@ namespace SecurePFX.Application.Mapping
 {
     public class CompanyProfile : Profile
     {
-        CompanyProfile()
+        public CompanyProfile()
         {
             CreateMap<CreateCompanyRequestDTO, Company>();
             CreateMap<Company, CompanyResponseDTO>();

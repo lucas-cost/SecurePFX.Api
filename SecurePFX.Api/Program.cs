@@ -35,6 +35,7 @@ builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddAutoMapper(typeof(CertificateProfile));
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddAutoMapper(typeof(CompanyProfile));
+builder.Services.AddAutoMapper(typeof(AuthorizeCompanyProfile));
 
 // MongoDB
 builder.Services.AddSingleton<MongoDbContext>(provider =>
@@ -53,6 +54,7 @@ builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<ICertificateService, CertificateService>();
 builder.Services.AddScoped<IEncryptionService, EncryptionService>();
 builder.Services.AddScoped<ICompanyService, CompanyService>();
+builder.Services.AddScoped<IAuthorizeCompanyService, AuthorizeCompanyService>();
 
 // Swagger (apenas para desenvolvimento)
 if (builder.Environment.IsDevelopment())
