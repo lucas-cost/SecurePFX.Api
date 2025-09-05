@@ -22,16 +22,26 @@ namespace SecurePFX.Application.Services
         {
             try
             {
-                Company existing = await _unitOfWork.Companies.GetByCnpjAsync(request.CNPJ);
+                bool existing = await _unitOfWork.Companies.GetByCnpjAsync(request.CNPJ);
 
-                if (existing != null)
+                if (existing)
                     throw new InvalidOperationException("Empresa já cadastrada com este CNPJ.");
 
-                //Validação futura para verificar se a companhia esta liberada para de registrar
+                AuthorizeCompany? authorizeCompany = await _unitOfWork.AuthorizedCompanies.GetAuthorizedCompany(request.CNPJ, request.AuthorizationCode);
+
+                if (authorizeCompany == null)
+                    throw new UnauthorizedAccessException("Empresa não autorizada a se registrar.");
+
+                if (!authorizeCompany.IsActive || authorizeCompany.ExpirationDate < DateTime.UtcNow)
+                    throw new UnauthorizedAccessException("Autorização inválida ou expirada.");
 
                 Company company = _mapper.Map<Company>(request);
-
                 await _unitOfWork.Companies.CreateAsync(company);
+
+                await _unitOfWork.CommitAsync();
+
+                authorizeCompany.CompanyId = company.Id;
+                await _unitOfWork.AuthorizedCompanies.UpdateAsync(authorizeCompany.Id, authorizeCompany.CompanyId);
 
                 CompanyResponseDTO response = _mapper.Map<CompanyResponseDTO>(company);
 

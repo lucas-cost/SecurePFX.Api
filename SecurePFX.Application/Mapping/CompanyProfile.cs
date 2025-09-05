@@ -9,7 +9,10 @@ namespace SecurePFX.Application.Mapping
     {
         public CompanyProfile()
         {
-            CreateMap<CreateCompanyRequestDTO, Company>();
+            CreateMap<CreateCompanyRequestDTO, Company>()
+                .ForMember(dest => dest.CreationDate, opt => opt.MapFrom(_ => DateTime.UtcNow))
+                .ForMember(dest => dest.Code, opt => opt.MapFrom( src => src.AuthorizationCode));
+
             CreateMap<Company, CompanyResponseDTO>();
         }
     }
