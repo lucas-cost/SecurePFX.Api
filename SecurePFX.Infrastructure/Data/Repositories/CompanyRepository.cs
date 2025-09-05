@@ -20,10 +20,10 @@ namespace SecurePFX.Infrastructure.Data.Repositories
             return company; 
         }
 
-        public async Task<Company?> GetByCnpjAsync(string cnpj)
+        public async Task<bool> GetByCnpjAsync(string cnpj)
         {
             return await _context.Companies
-                                 .FirstOrDefaultAsync(c => c.CNPJ == cnpj);
+                                 .AnyAsync(c => c.CNPJ == cnpj);
         }
     }
 }

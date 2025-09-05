@@ -32,5 +32,26 @@ namespace SecurePFX.Infrastructure.Data.Repositories
             return await _context.AuthorizedCompanies
                 .AnyAsync(ac => ac.CompanyCnpj == cnpj && ac.CompanyCode == code);
         }
+
+        public async Task<AuthorizeCompany?> GetAuthorizedCompany(string cnpj, Guid code)
+        {
+            return await _context.AuthorizedCompanies
+                .FirstOrDefaultAsync(ac => ac.CompanyCnpj == cnpj && ac.CompanyCode == code);
+        }
+
+        public async Task<AuthorizeCompany> UpdateAsync(int id, int? companyId)
+        {
+            AuthorizeCompany? entity = await _context.AuthorizedCompanies
+                                       .FirstOrDefaultAsync(ac => ac.Id == id);
+
+            if (entity == null)
+                throw new KeyNotFoundException("AuthorizedCompany não encontrada.");
+
+            entity.CompanyId = companyId;
+
+            await _context.SaveChangesAsync();
+
+            return entity;
+        }
     }
 }
