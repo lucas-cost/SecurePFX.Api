@@ -4,6 +4,8 @@
     {
         public int Id { get; set; }
 
+        public int? CompanyId { get; set; }
+
         public string CompanyCnpj { get; set; }
 
         public Guid CompanyCode { get; set; }

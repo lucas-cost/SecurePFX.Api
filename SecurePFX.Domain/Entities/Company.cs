@@ -12,6 +12,8 @@ namespace SecurePFX.Domain.Entities
 
         public string Email { get; set; }
 
-        public bool IsPayingCustomer { get; set; }
+        public Guid Code { get; set; }
+
+        public DateTime CreationDate { get; set; }
     }
 }
